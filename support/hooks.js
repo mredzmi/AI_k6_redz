@@ -1,6 +1,7 @@
 // support/hooks.js
 const { BeforeAll, AfterAll, Before, After, setDefaultTimeout } = require('@cucumber/cucumber');
 const playwright = require('playwright');
+require('dotenv').config();
 
 // Set default timeout for steps
 setDefaultTimeout(60 * 1000); // 60 seconds
@@ -23,7 +24,11 @@ AfterAll(async function () {
 
 Before(async function () {
   // Create new context and page for each scenario
-  context = await browser.newContext();
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  context = await browser.newContext({
+    baseURL: baseUrl,
+    // Add other context options if needed, like viewport size, etc.
+  });
   page = await context.newPage();
   this.page = page; // Attach page to Cucumber's world object
   this.browser = browser;
