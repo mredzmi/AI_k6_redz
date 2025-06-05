@@ -1,21 +1,40 @@
-const reporter = require('cucumber-html-reporter');
+const { htmlReport } = require("k6-html-reporter");
+const fs = require("node:fs");
 
-const options = {
-    theme: 'bootstrap',
-    jsonFile: 'reports/cucumber-report.json',
-    output: 'reports/cucumber-report.html',
-    reportSuiteAsScenarios: true,
-    scenarioTimestamp: true,
-    launchReport: false, // Set to true if you want the report to open automatically (not useful in this environment)
-    metadata: {
-        "App Version":"1.0.0", // Example metadata
-        "Test Environment": "STAGING", // Example metadata
-        "Browser": "Chromium", // Example metadata
-        "Platform": "WebApp", // Example metadata
-        "Parallel": "Scenarios", // Example metadata
-        "Executed": "Remote" // Example metadata
+const k6SummaryFile = "summary.json";
+const outputHtmlFile = "reports/k6-report.html";
+
+console.log(`Reading k6 summary from ${k6SummaryFile}...`);
+
+let jsonData;
+try {
+    const rawData = fs.readFileSync(k6SummaryFile, "utf-8");
+    jsonData = JSON.parse(rawData);
+} catch (ex) {
+    console.error(`Error reading or parsing k6 summary json from ${k6SummaryFile}: `, ex);
+    process.exit(1);
+}
+
+console.log(`Generating HTML report to ${outputHtmlFile}...`);
+
+try {
+    if (!fs.existsSync("reports")){
+        fs.mkdirSync("reports", { recursive: true });
     }
-};
+} catch (ex) {
+    console.error("Error creating reports directory: ", ex);
+    process.exit(1);
+}
 
-reporter.generate(options);
-console.log('HTML report generated successfully at reports/cucumber-report.html');
+try {
+    htmlReport(jsonData, {
+      title: "k6 Load Test Report",
+      output: outputHtmlFile,
+    });
+} catch (ex) {
+    console.error("Error generating HTML report: ", ex);
+    process.exit(1);
+}
+
+console.log(`HTML report generated successfully at ${outputHtmlFile}`);
+process.exit(0);

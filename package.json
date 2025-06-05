@@ -9,7 +9,8 @@
     "report:html": "node generate-html-report.js",
     "generate:ui": "node scripts/generateUiTests.js",
     "test:performance": "k6 run performance_tests/basic-load-test.js",
-    "generate:perf": "node scripts/generatePerformanceTests.js"
+    "generate:perf": "node scripts/generatePerformanceTests.js",
+    "test:performance-report": "k6 run performance_tests/basic-load-test.js --out json=summary.json && node generate-html-report.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
     "@playwright/test": "^1.52.0",
     "cucumber": "^6.0.7",
     "cucumber-html-reporter": "^7.2.0",
+    "k6-html-reporter": "^1.0.5",
     "playwright": "^1.52.0"
   },
   "dependencies": {

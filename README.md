@@ -90,19 +90,36 @@ After generation, you will need to implement any new step definitions in the `st
 
 ## Running Performance Tests (k6)
 
-1.  **Basic Load Test:**
-    To run the example performance test script provided:
+This project uses k6 for performance and load testing. Scripts are located in the `performance_tests/` directory.
+
+1.  **Basic Load Test (without HTML report):**
+    To run the example performance test script provided without generating an HTML report:
     ```bash
     npm run test:performance
     ```
-    This executes `performance_tests/basic-load-test.js`, which runs a simple load test against the target application.
+    This executes `performance_tests/basic-load-test.js` and outputs results to the console.
 
-2.  **Running Other k6 Scripts:**
-    To run any other k6 script located in `performance_tests/` or its subdirectories:
+2.  **Load Test with HTML Report:**
+    To run the performance tests and generate an HTML report:
+    ```bash
+    npm run test:performance-report
+    ```
+    This command will:
+    *   Execute the k6 load test script (`performance_tests/basic-load-test.js`).
+    *   Output the raw k6 summary data to `summary.json`.
+    *   Process `summary.json` using `k6-html-reporter` via the `generate-html-report.js` script.
+    *   The generated HTML report will be saved at `reports/k6-report.html`.
+
+3.  **Running Other k6 Scripts Manually:**
+    To run any other k6 script located in `performance_tests/` or its subdirectories directly:
     ```bash
     k6 run performance_tests/your_script_name.js
     ```
-    Replace `your_script_name.js` with the actual name of your k6 script.
+    Replace `your_script_name.js` with the actual name of your k6 script. This method will output to the console by default. If you need a JSON summary for manual report generation, you can run:
+    ```bash
+    k6 run performance_tests/your_script_name.js --out json=summary.json
+    node generate-html-report.js
+    ```
 
 ## Generating Performance Tests (AI-Powered)
 
